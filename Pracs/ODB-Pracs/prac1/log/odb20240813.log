@@ -1,0 +1,14 @@
+------------------------------------------------------------------------------------------------------------------------
+
+[2024-08-13 16:24:55 #1 store] 
+Database '/home/bobog/Documents/Code-Repos/Third-Year/Semester-2/COS-326/Pracs/ODB-Pracs/prac1/db/transactions.odb' is opened by 213034@Leptope
+
+[2024-08-13 16:24:55 #2 store] 
+Configuration path: ?
+
+[2024-08-13 16:24:55 #3 type] 
+Type prac1.Transaction is not enhanced.
+
+[2024-08-13 16:24:55 #4 store] 
+Database '/home/bobog/Documents/Code-Repos/Third-Year/Semester-2/COS-326/Pracs/ODB-Pracs/prac1/db/transactions.odb' is closed by 213034@Leptope
+
