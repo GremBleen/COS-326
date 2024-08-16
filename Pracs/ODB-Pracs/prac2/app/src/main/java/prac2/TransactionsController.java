@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 
 import javax.persistence.*;
 
+import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -24,8 +25,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
-public class MainController implements Initializable {
-    //Table View
+public class TransactionsController implements Initializable {
+    // Table View
     @FXML
     TableView<Transaction> transactionTable;
 
@@ -102,11 +103,11 @@ public class MainController implements Initializable {
         }
 
         if (senderAccountNumberField.getText() != null && !senderAccountNumberField.getText().isEmpty()) {
-            queryParts.add("t.senderAccountNumber = " + senderAccountNumberField.getText());
+            queryParts.add("t.senderAccount.accountNumber = " + senderAccountNumberField.getText());
         }
 
         if (receiverAccountNumberField.getText() != null && !receiverAccountNumberField.getText().isEmpty()) {
-            queryParts.add("t.receiverAccountNumber = " + receiverAccountNumberField.getText());
+            queryParts.add("t.receiverAccount.accountNumber = " + receiverAccountNumberField.getText());
         }
 
         if (amountField.getValue() != null && amountField.getValue() > 0) {
@@ -178,6 +179,16 @@ public class MainController implements Initializable {
 
         EntityManager em = ObjectDBManager.getInstance().getEM();
         em.getTransaction().begin();
+
+        BankAccount senderAccount = em.find(BankAccount.class, Long.parseLong(senderAccountNumberField.getText()));
+        BankAccount receiverAccount = em.find(BankAccount.class, Long.parseLong(receiverAccountNumberField.getText()));
+
+        t.setSenderAccount(senderAccount);
+        t.setReceiverAccount(receiverAccount);
+
+        senderAccount.addTransaction(t);
+        receiverAccount.addTransaction(t);
+
         em.persist(t);
         em.getTransaction().commit();
         ObjectDBManager.getInstance().closeEM();
@@ -189,10 +200,9 @@ public class MainController implements Initializable {
     private Transaction makeTransaction() {
         Transaction transaction = new Transaction();
         transaction.setTransactionDate(transactionDateField.getValue());
-        transaction.setSenderAccountNumber(Long.parseLong(senderAccountNumberField.getText()));
-        transaction.setReceiverAccountNumber(Long.parseLong(receiverAccountNumberField.getText()));
         transaction.setAmount(amountField.getValue());
         transaction.setTransactionType(transactionTypeField.getValue());
+
         return transaction;
     }
 
@@ -219,6 +229,9 @@ public class MainController implements Initializable {
             showAlert("Sender account number must be a valid number.");
             return false;
         }
+        if (!validateBankAccount(Long.parseLong(senderAccountNumberText))) {
+            return false;
+        }
 
         // Validate receiver account number
         String receiverAccountNumberText = receiverAccountNumberField.getText();
@@ -230,6 +243,9 @@ public class MainController implements Initializable {
             Long.parseLong(receiverAccountNumberText);
         } catch (NumberFormatException e) {
             showAlert("Receiver account number must be a valid number.");
+            return false;
+        }
+        if (!validateBankAccount(Long.parseLong(receiverAccountNumberText))) {
             return false;
         }
 
@@ -252,27 +268,6 @@ public class MainController implements Initializable {
         return true;
     }
 
-    // Methods to Delete
-    public void delete() {
-        if (selectedRow <= -1) {
-            showAlert("Please select a row to delete.");
-            return;
-        }
-
-        EntityManager em = ObjectDBManager.getInstance().getEM();
-        em.getTransaction().begin();
-
-        Transaction t = transactionTable.getItems().get(selectedRow);
-        Transaction transaction = em.find(Transaction.class, t.getTransactionId());
-        em.remove(transaction);
-
-        em.getTransaction().commit();
-        ObjectDBManager.getInstance().closeEM();
-
-        clearFields();
-        showPopUp("Delete Completed!");
-    }
-
     // Methods to Update
     public void update() {
         if (selectedRow <= -1) {
@@ -289,9 +284,13 @@ public class MainController implements Initializable {
 
         Transaction t = transactionTable.getItems().get(selectedRow);
         Transaction transaction = em.find(Transaction.class, t.getTransactionId());
+
+        BankAccount senderAccount = em.find(BankAccount.class, Long.parseLong(senderAccountNumberField.getText()));
+        BankAccount receiverAccount = em.find(BankAccount.class, Long.parseLong(receiverAccountNumberField.getText()));
+
         transaction.setTransactionDate(transactionDateField.getValue());
-        transaction.setSenderAccountNumber(Long.parseLong(senderAccountNumberField.getText()));
-        transaction.setReceiverAccountNumber(Long.parseLong(receiverAccountNumberField.getText()));
+        transaction.setSenderAccount(senderAccount);
+        transaction.setReceiverAccount(receiverAccount);
         transaction.setAmount(amountField.getValue());
         transaction.setTransactionType(transactionTypeField.getValue());
 
@@ -300,6 +299,57 @@ public class MainController implements Initializable {
 
         clearFields();
         showPopUp("Update Completed!");
+    }
+
+    // Methods to Delete
+    public void delete() {
+        if (selectedRow <= -1) {
+            showAlert("Please select a row to delete.");
+            return;
+        }
+
+        // show confirmation dialog
+        boolean confirmation = showConfirmationDialog("Are you sure you want to delete this transaction?");
+        if (!confirmation) {
+            return;
+        }
+
+        EntityManager em = ObjectDBManager.getInstance().getEM();
+        em.getTransaction().begin();
+
+        Transaction t = transactionTable.getItems().get(selectedRow);
+        Transaction transaction = em.find(Transaction.class, t.getTransactionId());
+
+        BankAccount senderAccount = transaction.getSenderAccount();
+        BankAccount receiverAccount = transaction.getReceiverAccount();
+
+        senderAccount.removeTransaction(transaction);
+        receiverAccount.removeTransaction(transaction);
+
+        em.remove(transaction);
+
+        em.getTransaction().commit();
+        ObjectDBManager.getInstance().closeEM();
+
+        clearFields();
+        showPopUp("Delete Completed!");
+    }
+
+    private boolean validateBankAccount(long accountNumber) {
+        EntityManager em = ObjectDBManager.getInstance().getEM();
+        em.getTransaction().begin();
+
+        BankAccount bankAccount = em.find(BankAccount.class, accountNumber);
+
+        em.getTransaction().commit();
+        ObjectDBManager.getInstance().closeEM();
+
+        if (bankAccount == null) {
+            showAlert("Bank account with account number " + accountNumber + " does not exist.");
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public void calculateTotal() {
@@ -332,8 +382,8 @@ public class MainController implements Initializable {
         transactionIdField.setText(String.valueOf(t.getTransactionId()));
         transactionDateField.setValue(LocalDate.parse(t.getTransactionDate()));
         amountField.getValueFactory().setValue(t.getAmount());
-        senderAccountNumberField.setText(String.valueOf(t.getSenderAccountNumber()));
-        receiverAccountNumberField.setText(String.valueOf(t.getReceiverAccountNumber()));
+        senderAccountNumberField.setText(String.valueOf(t.getSenderAccount().getAccountNumber()));
+        receiverAccountNumberField.setText(String.valueOf(t.getReceiverAccount().getAccountNumber()));
         transactionTypeField.setValue(t.getTransactionType());
     }
 
@@ -364,6 +414,19 @@ public class MainController implements Initializable {
         alert.showAndWait();
     }
 
+    private boolean showConfirmationDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+
+        if (alert.getResult().getText().equals("OK")) {
+            return true;
+        }
+        return false;
+    }
+
     private void refreshTable() {
         refreshTable(true);
     }
@@ -375,9 +438,13 @@ public class MainController implements Initializable {
         transactionDateColumn.setCellValueFactory(new PropertyValueFactory<Transaction, String>("transactionDate"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<Transaction, Double>("amount"));
         senderAccountNumberColumn
-                .setCellValueFactory(new PropertyValueFactory<Transaction, Long>("senderAccountNumber"));
+                .setCellValueFactory(
+                        cellData -> new SimpleLongProperty(cellData.getValue().getSenderAccount().getAccountNumber())
+                                .asObject());
         receiverAccountNumberColumn
-                .setCellValueFactory(new PropertyValueFactory<Transaction, Long>("receiverAccountNumber"));
+                .setCellValueFactory(
+                        cellData -> new SimpleLongProperty(cellData.getValue().getReceiverAccount().getAccountNumber())
+                                .asObject());
         transactionTypeColumn.setCellValueFactory(new PropertyValueFactory<Transaction, String>("transactionType"));
 
         EntityManager em = ObjectDBManager.getInstance().getEM();
@@ -386,7 +453,7 @@ public class MainController implements Initializable {
         if (clear) {
             TypedQuery<Transaction> query = em.createQuery("SELECT t FROM Transaction t", Transaction.class);
             transactions.clear();
-            transactions = FXCollections.observableArrayList(query.getResultList());
+            transactions.addAll(query.getResultList());
         }
 
         em.getTransaction().commit();
@@ -402,5 +469,13 @@ public class MainController implements Initializable {
         transactionTypeField.setValue("Select Transaction Type");
         amountField
                 .setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.00, Double.MAX_VALUE, 0.00, 0.1));
+    }
+
+    public void switchView() {
+        try {
+            App.setRoot("bank_accounts");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

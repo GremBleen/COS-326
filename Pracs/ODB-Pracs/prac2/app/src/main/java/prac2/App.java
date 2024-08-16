@@ -17,7 +17,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = loadFXML("main");
+        Parent root = loadFXML("transactions");
         scene = new Scene(root, 1099, 400);
         stage.setScene(scene);
         stage.setTitle("COS 326 - Prac2");

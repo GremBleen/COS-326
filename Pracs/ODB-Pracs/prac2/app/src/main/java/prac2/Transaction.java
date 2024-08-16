@@ -10,13 +10,20 @@ public class Transaction implements Serializable {
     private final static long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long transactionId;
 
     private String transactionDate;
     private double amount;
-    private long senderAccountNumber;
-    private long receiverAccountNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "senderAccount", referencedColumnName = "accountNumber")
+    private BankAccount senderAccount;
+
+    @ManyToOne
+    @JoinColumn(name = "receiverAccount", referencedColumnName = "accountNumber")
+    private BankAccount receiverAccount;
+
     private String transactionType;
 
     // Default constructor
@@ -24,12 +31,12 @@ public class Transaction implements Serializable {
     }
 
     // Parameterized constructor
-    public Transaction(LocalDate transactionDate, double amount, int senderAccountNumber, int receiverAccountNumber,
+    public Transaction(LocalDate transactionDate, double amount, BankAccount senderAccount, BankAccount receiverAccount,
             String transactionType) {
         this.transactionDate = transactionDate.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.amount = amount;
-        this.senderAccountNumber = senderAccountNumber;
-        this.receiverAccountNumber = receiverAccountNumber;
+        this.senderAccount = senderAccount;
+        this.receiverAccount = receiverAccount;
         this.transactionType = transactionType;
     }
 
@@ -58,20 +65,20 @@ public class Transaction implements Serializable {
         this.amount = amount;
     }
 
-    public Long getSenderAccountNumber() {
-        return senderAccountNumber;
+    public BankAccount getSenderAccount() {
+        return senderAccount;
     }
 
-    public void setSenderAccountNumber(Long senderAccountNumber) {
-        this.senderAccountNumber = senderAccountNumber;
+    public void setSenderAccount(BankAccount senderAccount) {
+        this.senderAccount = senderAccount;
     }
 
-    public Long getReceiverAccountNumber() {
-        return receiverAccountNumber;
+    public BankAccount getReceiverAccount() {
+        return receiverAccount;
     }
 
-    public void setReceiverAccountNumber(Long receiverAccountNumber) {
-        this.receiverAccountNumber = receiverAccountNumber;
+    public void setReceiverAccount(BankAccount receiverAccount) {
+        this.receiverAccount = receiverAccount;
     }
 
     public String getTransactionType() {
@@ -87,8 +94,8 @@ public class Transaction implements Serializable {
         return "Transaction ID: " + transactionId + "\n" +
                "Transaction Date: " + transactionDate + "\n" +
                "Amount: " + amount + "\n" +
-               "Sender Account Number: " + senderAccountNumber + "\n" +
-               "Receiver Account Number: " + receiverAccountNumber + "\n" +
+               "Sender Account Number: " + senderAccount + "\n" +
+               "Receiver Account Number: " + receiverAccount + "\n" +
                "Transaction Type: " + transactionType + "\n";
     }
 
