@@ -103,11 +103,11 @@ public class TransactionsController implements Initializable {
         }
 
         if (senderAccountNumberField.getText() != null && !senderAccountNumberField.getText().isEmpty()) {
-            queryParts.add("t.senderAccount.accountNumber = " + senderAccountNumberField.getText());
+            queryParts.add("t.senderAccountNumber = " + senderAccountNumberField.getText());
         }
 
         if (receiverAccountNumberField.getText() != null && !receiverAccountNumberField.getText().isEmpty()) {
-            queryParts.add("t.receiverAccount.accountNumber = " + receiverAccountNumberField.getText());
+            queryParts.add("t.receiverAccountNumber = " + receiverAccountNumberField.getText());
         }
 
         if (amountField.getValue() != null && amountField.getValue() > 0) {
@@ -183,11 +183,11 @@ public class TransactionsController implements Initializable {
         BankAccount senderAccount = em.find(BankAccount.class, Long.parseLong(senderAccountNumberField.getText()));
         BankAccount receiverAccount = em.find(BankAccount.class, Long.parseLong(receiverAccountNumberField.getText()));
 
+        senderAccount.getSenderTransactions().add(t);
+        receiverAccount.getReceiverTransactions().add(t);
+
         t.setSenderAccount(senderAccount);
         t.setReceiverAccount(receiverAccount);
-
-        senderAccount.addTransaction(t);
-        receiverAccount.addTransaction(t);
 
         em.persist(t);
         em.getTransaction().commit();
@@ -285,12 +285,12 @@ public class TransactionsController implements Initializable {
         Transaction t = transactionTable.getItems().get(selectedRow);
         Transaction transaction = em.find(Transaction.class, t.getTransactionId());
 
-        BankAccount senderAccount = em.find(BankAccount.class, Long.parseLong(senderAccountNumberField.getText()));
-        BankAccount receiverAccount = em.find(BankAccount.class, Long.parseLong(receiverAccountNumberField.getText()));
+        BankAccount senderAccount = em.find(BankAccount.class, Long.parseLong(senderAccountNumberColumn.getText()));
+        BankAccount receiverAccount = em.find(BankAccount.class, Long.parseLong(receiverAccountNumberColumn.getText()));
 
-        transaction.setTransactionDate(transactionDateField.getValue());
         transaction.setSenderAccount(senderAccount);
         transaction.setReceiverAccount(receiverAccount);
+        transaction.setTransactionDate(transactionDateField.getValue());
         transaction.setAmount(amountField.getValue());
         transaction.setTransactionType(transactionTypeField.getValue());
 
@@ -319,12 +319,6 @@ public class TransactionsController implements Initializable {
 
         Transaction t = transactionTable.getItems().get(selectedRow);
         Transaction transaction = em.find(Transaction.class, t.getTransactionId());
-
-        BankAccount senderAccount = transaction.getSenderAccount();
-        BankAccount receiverAccount = transaction.getReceiverAccount();
-
-        senderAccount.removeTransaction(transaction);
-        receiverAccount.removeTransaction(transaction);
 
         em.remove(transaction);
 
@@ -439,12 +433,10 @@ public class TransactionsController implements Initializable {
         amountColumn.setCellValueFactory(new PropertyValueFactory<Transaction, Double>("amount"));
         senderAccountNumberColumn
                 .setCellValueFactory(
-                        cellData -> new SimpleLongProperty(cellData.getValue().getSenderAccount().getAccountNumber())
-                                .asObject());
+                        cellData -> new SimpleLongProperty(cellData.getValue().getSenderAccount().getAccountNumber()).asObject());
         receiverAccountNumberColumn
                 .setCellValueFactory(
-                        cellData -> new SimpleLongProperty(cellData.getValue().getReceiverAccount().getAccountNumber())
-                                .asObject());
+                        cellData -> new SimpleLongProperty(cellData.getValue().getReceiverAccount().getAccountNumber()).asObject());
         transactionTypeColumn.setCellValueFactory(new PropertyValueFactory<Transaction, String>("transactionType"));
 
         EntityManager em = ObjectDBManager.getInstance().getEM();

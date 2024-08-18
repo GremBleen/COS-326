@@ -1,76 +1,44 @@
 package prac2;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
 import javax.persistence.*;
 
 @Entity
-public class Transaction implements Serializable {
-    private final static long serialVersionUID = 1L;
-
+@Table(name = "transaction")
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long transactionId;
+    @Column(name = "transaction_id", nullable = false)
+    private Long transactionId;
 
+    @Column(name = "transaction_date", nullable = false)
     private String transactionDate;
-    private double amount;
 
-    @ManyToOne
-    @JoinColumn(name = "senderAccount", referencedColumnName = "accountNumber")
-    private BankAccount senderAccount;
+    @Column(name = "amount", nullable = false)
+    private Double amount;
 
-    @ManyToOne
-    @JoinColumn(name = "receiverAccount", referencedColumnName = "accountNumber")
-    private BankAccount receiverAccount;
-
+    @Column(name = "transaction_type", nullable = false)
     private String transactionType;
 
-    // Default constructor
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "sender_account_account_number", nullable = false)
+    private BankAccount senderAccount;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "receiver_account_account_number", nullable = false)
+    private BankAccount receiverAccount;
+
     public Transaction() {
     }
 
-    // Parameterized constructor
-    public Transaction(LocalDate transactionDate, double amount, BankAccount senderAccount, BankAccount receiverAccount,
-            String transactionType) {
+    public Transaction(LocalDate transactionDate, Double amount, String transactionType, BankAccount senderAccount,
+            BankAccount receiverAccount) {
         this.transactionDate = transactionDate.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         this.amount = amount;
+        this.transactionType = transactionType;
         this.senderAccount = senderAccount;
         this.receiverAccount = receiverAccount;
-        this.transactionType = transactionType;
-    }
-
-    // Getters and Setters
-    public Long getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(Long transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public String getTransactionDate() {
-        return transactionDate;
-    }
-
-    public void setTransactionDate(LocalDate transactionDate) {
-        this.transactionDate = transactionDate.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public BankAccount getSenderAccount() {
-        return senderAccount;
-    }
-
-    public void setSenderAccount(BankAccount senderAccount) {
-        this.senderAccount = senderAccount;
     }
 
     public BankAccount getReceiverAccount() {
@@ -81,6 +49,14 @@ public class Transaction implements Serializable {
         this.receiverAccount = receiverAccount;
     }
 
+    public BankAccount getSenderAccount() {
+        return senderAccount;
+    }
+
+    public void setSenderAccount(BankAccount senderAccount) {
+        this.senderAccount = senderAccount;
+    }
+
     public String getTransactionType() {
         return transactionType;
     }
@@ -89,14 +65,27 @@ public class Transaction implements Serializable {
         this.transactionType = transactionType;
     }
 
-    @Override
-    public String toString(){
-        return "Transaction ID: " + transactionId + "\n" +
-               "Transaction Date: " + transactionDate + "\n" +
-               "Amount: " + amount + "\n" +
-               "Sender Account Number: " + senderAccount + "\n" +
-               "Receiver Account Number: " + receiverAccount + "\n" +
-               "Transaction Type: " + transactionType + "\n";
+    public Double getAmount() {
+        return amount;
     }
 
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public String getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(LocalDate transactionDate) {
+        this.transactionDate = transactionDate.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    public Long getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(Long transactionId) {
+        this.transactionId = transactionId;
+    }
 }

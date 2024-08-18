@@ -171,7 +171,7 @@ public class BankAccountsController implements Initializable {
             return;
         }
 
-        boolean confirmation = showConfirmationDialog("Are you sure you want to delete this transaction?");
+        boolean confirmation = showConfirmationDialog("Are you sure you want to delete this Bank Account?");
         if (!confirmation) {
             return;
         }
@@ -181,6 +181,7 @@ public class BankAccountsController implements Initializable {
 
         BankAccount b = bankAccountsTable.getItems().get(selectedRow);
         BankAccount bankAccount = em.find(BankAccount.class, b.getAccountNumber());
+
         em.remove(bankAccount);
 
         em.getTransaction().commit();
@@ -208,6 +209,22 @@ public class BankAccountsController implements Initializable {
         BankAccount b = bankAccounts.get(selectedRow);
         accountNumberField.setText(String.valueOf(b.getAccountNumber()));
         accountHolderNameField.setText(b.getAccountHolderName());
+    }
+
+    public void showTransactions() {
+        if (selectedRow <= -1) {
+            showAlert("Please select a row to view transactions.");
+            return;
+        }
+
+        BankAccount b = bankAccounts.get(selectedRow);
+        EntityManager em = ObjectDBManager.getInstance().getEM();
+        em.getTransaction().begin();
+
+        BankAccount bankAccount = em.find(BankAccount.class, b.getAccountNumber());
+        // USe the 
+
+        switchView();
     }
 
     private void showAlert(String message) {

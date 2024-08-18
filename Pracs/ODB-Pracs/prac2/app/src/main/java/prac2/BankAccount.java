@@ -1,41 +1,48 @@
 package prac2;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
 
 @Entity
+@Table(name = "bank_account")
 public class BankAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long accountNumber;
+    @Column(name = "account_number", nullable = false)
+    private Long accountNumber;
+
+    @Column(name = "account_holder_name", nullable = false)
     private String accountHolderName;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private Set<Transaction> transactions;
+    @OneToMany(mappedBy = "senderAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Transaction> senderTransactions = new HashSet<>();
 
-    BankAccount() {
+    @OneToMany(mappedBy = "receiverAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Transaction> receiverTransactions = new HashSet<>();
+
+    public BankAccount() {
     }
 
-    BankAccount(String accountHolderName) {
+    public BankAccount(String accountHolderName) {
         this.accountHolderName = accountHolderName;
-        this.transactions = new java.util.HashSet<>();
     }
 
-    public void addTransaction(Transaction transaction) {
-        transactions.add(transaction);
+    public Set<Transaction> getReceiverTransactions() {
+        return receiverTransactions;
     }
 
-    public void removeTransaction(Transaction transaction) {
-        transactions.remove(transaction);
+    public void setReceiverTransactions(Set<Transaction> receiverTransactions) {
+        this.receiverTransactions = receiverTransactions;
     }
 
-    public long getAccountNumber() {
-        return accountNumber;
+    public Set<Transaction> getSenderTransactions() {
+        return senderTransactions;
     }
 
-    public void setAccountNumber(long accountNumber) {
-        this.accountNumber = accountNumber;
+    public void setSenderTransactions(Set<Transaction> senderTransactions) {
+        this.senderTransactions = senderTransactions;
     }
 
     public String getAccountHolderName() {
@@ -44,5 +51,13 @@ public class BankAccount {
 
     public void setAccountHolderName(String accountHolderName) {
         this.accountHolderName = accountHolderName;
+    }
+
+    public Long getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(Long accountNumber) {
+        this.accountNumber = accountNumber;
     }
 }
