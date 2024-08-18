@@ -1,15 +1,21 @@
 package prac2;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javax.persistence.*;
 
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.*;
 import javafx.fxml.*;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class BankAccountsController implements Initializable {
 
@@ -128,7 +134,7 @@ public class BankAccountsController implements Initializable {
             showAlert("Account holder name is required.");
             return false;
         }
-        if(accountHolderNameText.length() < 3) {
+        if (accountHolderNameText.length() < 3) {
             showAlert("Account holder name must be at least 3 characters long.");
             return false;
         }
@@ -211,7 +217,7 @@ public class BankAccountsController implements Initializable {
         accountHolderNameField.setText(b.getAccountHolderName());
     }
 
-    public void showTransactions() {
+    public void showTransactions() throws IOException {
         if (selectedRow <= -1) {
             showAlert("Please select a row to view transactions.");
             return;
@@ -222,9 +228,14 @@ public class BankAccountsController implements Initializable {
         em.getTransaction().begin();
 
         BankAccount bankAccount = em.find(BankAccount.class, b.getAccountNumber());
-        // USe the 
+        em.getTransaction().commit();
+        ObjectDBManager.getInstance().closeEM();
 
-        switchView();
+        ObservableList<Transaction> transactions = FXCollections.observableArrayList();
+        transactions.addAll(bankAccount.getSenderTransactions());
+        transactions.addAll(bankAccount.getReceiverTransactions());
+
+        showPopupTable(transactions);
     }
 
     private void showAlert(String message) {
@@ -241,6 +252,57 @@ public class BankAccountsController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void showPopupTable(ObservableList<Transaction> transactions) {
+        // Step 1: Create a new Stage
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.setTitle("Transactions");
+
+        // Step 2: Create a TableView and define its columns
+        TableView<Transaction> tableView = new TableView<>();
+
+        TableColumn<Transaction, String> dateColumn = new TableColumn<>("Date");
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("transactionDate"));
+
+        TableColumn<Transaction, Long> senderColumn = new TableColumn<>("Sender");
+        senderColumn.setCellValueFactory(
+                cellData -> new SimpleLongProperty(cellData.getValue().getSenderAccount().getAccountNumber())
+                        .asObject());
+
+        TableColumn<Transaction, String> senderNameColumn = new TableColumn<>("Sender Name");
+        senderNameColumn.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getSenderAccount().getAccountHolderName()));
+
+        TableColumn<Transaction, Long> receiverColumn = new TableColumn<>("Receiver");
+        receiverColumn.setCellValueFactory(
+                cellData -> new SimpleLongProperty(cellData.getValue().getReceiverAccount().getAccountNumber())
+                        .asObject());
+
+        TableColumn<Transaction, String> receiverNameColumn = new TableColumn<>("Receiver Name");
+        receiverNameColumn.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getReceiverAccount().getAccountHolderName()));
+
+        TableColumn<Transaction, Double> amountColumn = new TableColumn<>("Amount");
+        amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
+
+        TableColumn<Transaction, String> typeColumn = new TableColumn<>("Type");
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("transactionType"));
+
+        tableView.getColumns().addAll(dateColumn, senderColumn, senderNameColumn, receiverColumn, receiverNameColumn,
+                amountColumn, typeColumn);
+        // Step 3: Populate the TableView with data
+        tableView.setItems(transactions);
+
+        // Step 4: Create a Scene with the TableView
+        Scene scene = new Scene(tableView);
+
+        // Step 5: Set the Scene to the Stage
+        popupStage.setScene(scene);
+
+        // Step 6: Show the Stage
+        popupStage.showAndWait();
     }
 
     private boolean showConfirmationDialog(String message) {
@@ -273,7 +335,7 @@ public class BankAccountsController implements Initializable {
             TypedQuery<BankAccount> query = em.createQuery("SELECT ba FROM BankAccount ba", BankAccount.class);
             bankAccounts.clear();
             bankAccounts.addAll(query.getResultList());
-            
+
             em.getTransaction().commit();
             ObjectDBManager.getInstance().closeEM();
         }

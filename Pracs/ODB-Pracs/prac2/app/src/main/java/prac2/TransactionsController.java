@@ -421,11 +421,11 @@ public class TransactionsController implements Initializable {
         return false;
     }
 
-    private void refreshTable() {
+    public void refreshTable() {
         refreshTable(true);
     }
 
-    private void refreshTable(boolean clear) {
+    public void refreshTable(boolean clear) {
         transactionTable.getItems().clear();
 
         transactionIdColumn.setCellValueFactory(new PropertyValueFactory<Transaction, Long>("transactionId"));
