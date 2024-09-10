@@ -1,0 +1,154 @@
+<musicians>
+	<musician type = "band">
+		<name>If These Trees Could Talk</name>
+		<genre>Post-Rock</genre>
+		<members>
+			<member instrument = "bass">
+				<first_name>Tom</first_name>
+				<last_name>Fihe</last_name>
+			</member>
+			<member instrument = "guitar">
+				<first_name>Jeff</first_name>
+				<last_name>Kalal</last_name>
+			</member>
+			<member instrument = "guitar">
+				<first_name>Cody</first_name>
+				<last_name>Kelly</last_name>
+			</member>
+			<member instrument = "guitar">
+				<first_name>Mike</first_name>
+				<last_name>Socrates</last_name>
+			</member>
+			<member instrument = "drums">
+				<first_name>Zack</first_name>
+				<last_name>Kelly</last_name>
+			</member>
+		</members>
+		<albums>
+			<album year = "2006">If These Trees Could Talk</album>
+			<album year = "2009">Above the Earth, Below the Sky</album>
+		</albums>
+	</musician>
+	<musician type = "solo">
+		<name>Justin Bergh</name>
+		<genre>Pop-Rock</genre>
+		<albums>
+			<album year = "2005">Out of My Hands</album>
+			<album year = "2010">Lateralus</album>
+		</albums>
+	</musician>
+	<musician type = "band">
+		<name>Tool</name>
+		<genre>Progressive Metal</genre>
+		<members>
+			<member instrument = "drums">
+				<first_name>Danny</first_name>
+				<last_name>Carey</last_name>
+			</member>
+			<member instrument = "bass">
+				<first_name>Justin</first_name>
+				<last_name>Chancellor</last_name>
+			</member>
+			<member instrument = "vocals">
+				<first_name>Maynard James</first_name>
+				<last_name>Keenan</last_name>
+			</member>
+			<member instrument = "guitar">
+				<first_name>Adam</first_name>
+				<last_name>Jones</last_name>
+			</member>
+		</members>
+		<albums>
+			<album year = "1993">Undertow</album>
+			<album year = "1996">Aenima</album>
+			<album year = "2001">Lateralus</album>
+			<album year = "2006">10,000 Days</album>
+		</albums>
+	</musician>
+	<musician type = "band">
+		<name>Zebra and Giraffe</name>
+		<genre>Electronic</genre>
+		<members>
+			<member instrument = "guitar">
+				<first_name>Greg</first_name>
+				<last_name>Carlin</last_name>
+			</member>
+			<member instrument = "guitar">
+				<first_name>Alan</first_name>
+				<last_name>Shenton</last_name>
+			</member>
+			<member instrument = "bass">
+				<first_name>Andrew</first_name>
+				<last_name>Maskell</last_name>
+			</member>
+			<member instrument = "keyboard">
+				<first_name>Rob</first_name>
+				<last_name>Davidson</last_name>
+			</member>
+			<member instrument = "drums">
+				<first_name>Darren</first_name>
+				<last_name>Leader</last_name>
+			</member>
+		</members>
+		<albums>
+			<album year = "2008">Collected Memories</album>
+		</albums>
+	</musician>
+	<musician type = "solo">
+		<name>Ben Folds</name>
+		<genre>Power Pop</genre>
+		<albums>
+			<album year = "2001">Rockin' the Suburbs</album>
+			<album year = "2003">Speed Graphic</album>
+			<album year = "2003">Sunny 16</album>
+			<album year = "2004">Super D</album>
+			<album year = "2005">Songs for Goldfish</album>
+			<album year = "2005">Songs for Silverman</album>
+			<album year = "2008">Way to Normal</album>
+		</albums>
+	</musician>
+	<musician type = "band">
+		<name>Harris Tweed</name>
+		<genre>Folk Pop</genre>
+		<members>
+			<member instrument = "piano">
+				<first_name>Cherylin</first_name>
+				<last_name>Macneil</last_name>
+			</member>
+			<member instrument = "drums">
+				<first_name>Darryl</first_name>
+				<last_name>Torr</last_name>
+			</member>
+		</members>
+		<albums>
+			<album year = "2006">The Younger</album>
+		</albums>
+	</musician>
+	<musician type = "band">
+		<name>Billy Talent</name>
+		<genre>Punk Rock</genre>
+		<members>
+			<member instrument = "vocals">
+				<first_name>Benjamin</first_name>
+				<last_name>Kowalewicz</last_name>
+			</member>
+			<member instrument = "guitar">
+				<first_name>Ian</first_name>
+				<last_name>D'Sa</last_name>
+			</member>
+			<member instrument = "bass">
+				<first_name>Jonathan</first_name>
+				<last_name>Gallant</last_name>
+			</member>
+			<member instrument = "drums">
+				<first_name>Aaron</first_name>
+				<last_name>Solowoniuk</last_name>
+			</member>
+		</members>
+		<albums>
+			<album year = "1999">Watoosh!</album>
+			<album year = "2003">Billy Talent</album>
+			<album year = "2006">Billy Talent II</album>
+		</albums>
+	</musician>
+</musicians>

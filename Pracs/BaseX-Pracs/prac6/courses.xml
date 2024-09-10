@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<courses>
+   <course>
+      <code>COS151</code>
+      <name>Introduction to Computer Science</name>
+      <instructor>Stefan Gruner</instructor>
+      <department>Computer Science</department>
+      <credits>8</credits>
+   </course>
+   <course>
+      <code>COS326</code>
+      <name>Database Systems</name>
+      <instructor>Sheunesu Makura</instructor>
+      <department>Computer Science</department>
+      <credits>18</credits>
+   </course>
+   <course>
+      <code>WTW124</code>
+      <name>Mathematics 124</name>
+      <instructor>Christiaan Leroux</instructor>
+      <department>Mathematics</department>
+      <credits>16</credits>
+   </course>
+   <course>
+      <code>WTW115</code>
+      <name>Discrete Structures</name>
+      <instructor>Ruaan Kellerman</instructor>
+      <department>Mathematics</department>
+      <credits>8</credits>
+   </course>
+   <course>
+      <code>COS330</code>
+      <name>Computer Security and Ethics</name>
+      <instructor>Hein Venter</instructor>
+      <department>Computer Science</department>
+      <credits>18</credits>
+   </course>
+</courses>

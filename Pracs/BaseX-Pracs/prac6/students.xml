@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<students>
+   <student>
+      <id>1001</id>
+      <name>Thando Mandela</name>
+      <enrollments>
+         <course code="COS151"/>
+         <course code="WTW124"/>
+      </enrollments>
+   </student>
+   <student>
+      <id>1002</id>
+      <name>Palesa Mohlare</name>
+      <enrollments>
+         <course code="COS326"/>
+         <course code="WTW124"/>
+         <course code="COS330"/>
+      </enrollments>
+   </student>
+   <student>
+      <id>1003</id>
+      <name>Marijke Jooste</name>
+      <enrollments>
+         <course code="COS151"/>
+         <course code="COS326"/>
+         <course code="WTW115"/>
+      </enrollments>
+   </student>
+   <student>
+      <id>1004</id>
+      <name>Emily Davis</name>
+      <enrollments>
+         <course code="WTW115"/>
+         <course code="COS330"/>
+      </enrollments>
+   </student>
+   <student>
+      <id>1005</id>
+      <name>Tshifhiwa Ndou</name>
+      <enrollments>
+         <course code="COS151"/>
+         <course code="COS330"/>
+      </enrollments>
+   </student>
+    <student>
+      <id>1006</id>
+      <name>Preenan Pillay</name>
+      <enrollments>
+         <course code="COS151"/>
+         <course code="COS330"/>
+		 <course code="COS326"/>
+      </enrollments>
+   </student>
+</students>

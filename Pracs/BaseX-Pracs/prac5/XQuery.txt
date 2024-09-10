@@ -1,0 +1,68 @@
+(:~ Task 1: XPath Queries ~:)
+
+(:~ 1 List the names of all the musicians in the database. ~:)
+doc("Musicians.xml")//musician/name/text()
+musicians/musician/name/text()
+
+(:~ 2 For a specific musician (Billy Talent), list the album names and their years. ~:)
+doc("Musicians.xml")//musician[name="Billy Talent"]/albums/album
+musicians/musician[name="Billy Talent"]/albums/album
+
+(:~ 3 List the names of all musicians who have released an album titled "Lateralus". ~:)
+doc("Musicians.xml")//musician[albums/album="Lateralus"]/name/text()
+musicians/musician[albums/album="Lateralus"]/name/text()
+
+(:~ 4 List all musicians who have the word "Pop" anywhere in their genre. ~:)
+doc("Musicians.xml")//musician[contains(genre, "Pop")]/name/text()
+musicians/musician[contains(genre, "Pop")]/name/text()
+
+(:~ 5 List all the solo musicians. ~:)
+doc("Musicians.xml")//musician[@type='solo']/name/text()
+musicians/musician[@type='solo']/name/text()
+
+(:~ 6 Show the name and genre of the second solo musician. ~:)
+doc("Musicians.xml")//musician[@type='solo'][2]/(name, genre)/text()
+musicians/musician[@type='solo'][2]/(name, genre)/text()
+
+(:~ 7 Display the fourth album by the musician "Ben Folds". ~:)
+doc("Musicians.xml")//musician[name="Ben Folds"]/albums/album[4]/text()
+musicians/musician[name="Ben Folds"]/albums/album[4]/text()
+
+(:~ 8 List the names of albums that were released in 2008 or later. ~:)
+doc("Musicians.xml")//album[@year > 2007]/text()
+musicians/album[@year>2007]/text()
+
+(:~ Task 2: FLWOR Expressions ~:)
+
+(:~ 9 Write a FLWOR query to determine the rate at which a specific musician produces albums.
+List all the musician names and their corresponding rates, ordering the results from the
+most frequent to the least frequent. For example, assume that a specific artist has released
+three albums in 2001, 2002 and 2004. To calculate the rate, divide the difference in years
+between the first and last album by the number of albums. The calculation for this example
+is then: (2004-2001+1)/3 = 1.3 years. Make sure that each artist is displayed on a new line. ~:)
+
+for $musician in doc("Musicians.xml")//musician
+(:~ for $albums in $musician/albums/album ~:)
+let $albums := $musician/albums/album
+let $firstYear := min($albums/@year)
+let $lastYear := max($albums/@year)
+let $rate := ($lastYear - $firstYear + 1) div count($albums)
+order by $rate ascending
+return concat($musician/name/text(), ", rate: ", format-number($rate, '0.##'))
+
+(:~ 10 Calculate the average number of albums released by bands and solo musicians ~:)
+(: Calculate average number of albums for bands :)
+let $bands := doc("Musicians.xml")//musician[@type="band"]
+(:~ let $bands := musicians/musician[@type="band"] ~:)
+let $totalAlbumsBands := count($bands/albums/album)
+let $countBands := count($bands)
+let $averageAlbumsBands := if ($countBands > 0) then $totalAlbumsBands div $countBands else 0
+
+(: Calculate average number of albums for solo musicians :)
+let $soloMusicians := doc("Musicians.xml")//musician[@type="solo"]
+(:~ let $soloMusicians := musicians/musician[@type="solo"] ~:)
+let $totalAlbumsSolo := count($soloMusicians/albums/album)
+let $countSolo := count($soloMusicians)
+let $averageAlbumsSolo := if ($countSolo > 0) then $totalAlbumsSolo div $countSolo else 0
+
+return concat("Average number of albums for bands: ", $averageAlbumsBands , "&#10;", ", Average number of albums for solo musicians: ", $averageAlbumsSolo)
